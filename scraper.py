@@ -18,9 +18,11 @@ import sys
 import re
 from bs4 import BeautifulSoup, SoupStrainer
 
+
 def web_scraper(link):
     """Scrapes phone numbers, email addresses, and urls."""
     response = requests.get(link)
+
     for link in BeautifulSoup(response.text,
                               "html.parser", parse_only=SoupStrainer("a")):
         if link.has_attr("href"):
@@ -31,12 +33,14 @@ def web_scraper(link):
                 print("URL: " + url.group())
 
     for email in BeautifulSoup(response.text, "html.parser"):
-        emails = re.search(r"([a-zA-Z] + @ [a-zA-Z0-9-]+ \. [a-zA-Z0-9-.][a-zA-Z] + )", str(email))
+        emails = re.search("([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)",
+                           str(email))
         if emails:
             print("Email Address: " + emails.group())
 
     for phone_number in BeautifulSoup(response.text, "html.parser"):
-        phone_numbers = re.search(r"1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?", str(phone_number))
+        phone_numbers = re.search(r"1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?",
+                                  str(phone_number))
         if phone_numbers:
             print("Phone Number: " + phone_numbers.group())
 
